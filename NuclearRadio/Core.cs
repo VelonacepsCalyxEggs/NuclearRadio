@@ -28,6 +28,7 @@ namespace NuclearOptionRadio
         public static ConfigEntry<bool> SpatialAudio;
         public static ConfigEntry<string> StreamUrl;
         public static ConfigEntry<float> AudioVolume;
+        public static ConfigEntry<KeyCode> ActivationKey;
 
         private BufferedWaveProvider waveProvider;
         private Thread networkThread;
@@ -56,6 +57,12 @@ namespace NuclearOptionRadio
                 50f,
                 new ConfigDescription("Volume", new AcceptableValueRange<float>(0f, 100f))
             );
+            ActivationKey = Config.Bind(
+                "General",
+                "SetKey",
+                KeyCode.K,
+                "Set the key on which to disable or enable the radio."
+            );
             // Config change handlers.
             AudioVolume.SettingChanged += OnVolumeSettingChanged;
             SpatialAudio.SettingChanged += OnSpatialSettingChanged;
@@ -72,7 +79,7 @@ namespace NuclearOptionRadio
 
         void Update()
         {
-            if (UnityInput.Current.GetKeyDown(KeyCode.K))
+            if (UnityInput.Current.GetKeyDown(ActivationKey.Value))
             {
                 if (!isPlaying) StartRadio();
                 else StopRadio();
